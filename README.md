@@ -1,1 +1,1 @@
-# Leapfrog Triejoin
+# Leapfrog Join

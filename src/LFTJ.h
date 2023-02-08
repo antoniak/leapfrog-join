@@ -2,6 +2,7 @@
 #define LFTJ_H
 
 #include <numeric>
+#include "DataHandler.h"
 #include "TrieIterator.h"
 
 using namespace types;

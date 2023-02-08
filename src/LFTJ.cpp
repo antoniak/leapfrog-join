@@ -1,4 +1,4 @@
-#include "LFTJS.h"
+#include "LFTJ.h"
 
 #include <stdlib.h>
 
@@ -9,10 +9,6 @@ Level::Level(std::vector<TrieIterator*> iters){
 }
 
 LFTJ::LFTJ(DataHandler<int> *dH, bool count) : dH_(dH), countTuples_(count) {
-#ifdef MEASURE_TIME
-    auto time1 = std::chrono::steady_clock::now();
-#endif
-
     attrOrder_.reserve(dH_->attrs);
     for (int i = 0; i < dH_->attrs; ++i) attrOrder_.push_back(i);
 
@@ -129,7 +125,7 @@ void LFTJ::UpdateResult() {
     }
     if(level_ == dH_->attrs - 1) {
         count_ += levels_[level_]->count;
-        // resultTable.push_back();
+        resultTable.push_back();
     }
 }
 

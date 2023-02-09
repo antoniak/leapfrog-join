@@ -24,26 +24,27 @@ namespace types {
 }
 
 namespace utils {
-    static bool isDirectory(const char *path) {
-        struct stat info;
-        if(stat(path, &info) != 0) return false;
-        else if(info.st_mode & S_IFDIR) return true;
-        else return false;
-    }
+    // const bool isDirectory(const char *path) {
+    //     struct stat info;
+    //     if(stat(path, &info) != 0) return false;
+    //     else if(info.st_mode & S_IFDIR) return true;
+    //     else return false;
+    // }
 
-    template <typename T>
-    void ReadTable(const std::string &path, Table<T> &table) {
-        std::ifstream input(path, std::ifstream::in);
-        table.clear();
-        T elem_0;
-        while (input >> elem_0){
-            input >> elem_1;
-            auto tuple = std::make_tuple(id, elem_0, elem_1);
-            table.push_back(tuple);
-            id++;
-        }
-        input.close();
-    }
+    // template <typename T>
+    // void ReadTable(const std::string &path, int attributes, Table<T> &table) {
+    //     std::ifstream input(path, std::ifstream::in);
+    //     table.clear();
+    //     Tuple<T> tuple(attributes);
+    //     T elem;
+    //     while (input >> elem){
+    //         input >> elem_1;
+    //         auto tuple = std::make_tuple(id, elem_0, elem_1);
+    //         table.push_back(tuple);
+    //         id++;
+    //     }
+    //     input.close();
+    // }
 
     template<typename T>
     static std::vector<std::vector<T>> PartitionTable(const std::vector<T>& table, int n) {

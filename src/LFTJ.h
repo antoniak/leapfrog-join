@@ -1,50 +1,50 @@
-// #ifndef LFTJ_H
-// #define LFTJ_H
+#ifndef LFTJ_H
+#define LFTJ_H
 
-// #include <numeric>
-// #include "DataHandler.h"
-// #include "TrieIterator.h"
+#include <numeric>
+#include "DataHandler.h"
+#include "TrieIterator.h"
 
-// using namespace types;
+using namespace types;
 
-// class Level {
-// public:
-//     bool atEnd;
-//     int p;
-//     int key;
-//     long long count;
-//     std::vector<TrieIterator*> iters_;
+class Level {
+public:
+    bool atEnd;
+    int p;
+    int key;
+    long long count;
+    std::vector<TrieIterator*> iters_;
 
-// public:
-//     Level(std::vector<TrieIterator*> iters);
-// };
+public:
+    Level(std::vector<TrieIterator*> iters);
+};
 
-// class LFTJ {
-// public:
-//     explicit LFTJ(DataHandler<int> *dH, bool count = false);
-//     ~LFTJ() = default;
-//     long long Count();
+class LFTJ {
+public:
+    explicit LFTJ(DataHandler *dH, bool count = false);
+    ~LFTJ() = default;
+    long long Count();
 
-// private:
-//     DataHandler<int> *dH_;
-//     bool countTuples_;
-//     Table<int> resultTable_;
-//     std::unordered_map<int, TrieIterator*> trieIterators_;
-//     std::vector<int> attrOrder_;
-//     std::vector<Level*> levels_;
-//     bool isEmpty_ = false;
-//     int level_ = -1;
-//     bool totalEnd_ = false;
-//     long long count_ = 0;
+private:
+    DataHandler *dH_;
+    bool countTuples_;
+    // Table<int> resultTable_;
+    std::unordered_map<int, TrieIterator*> trieIterators_;
+    std::vector<int> attrOrder_;
+    std::vector<Level*> levels_;
+    bool isEmpty_ = false;
+    int level_ = -1;
+    bool totalEnd_ = false;
+    long long count_ = 0;
 
-//     void Open();
-//     void Init();
-//     void Search();
-//     void Next();
-//     void Up();
-//     void UpdateResult();
-//     bool AnyIterAtEnd();
-// };
+    void Open();
+    void Init();
+    void Search();
+    void Next();
+    void Up();
+    void UpdateResult();
+    bool AnyIterAtEnd();
+};
 
 
-// #endif //LFTJ_H
+#endif //LFTJ_H

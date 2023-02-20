@@ -6,7 +6,6 @@ set(SOURCES ${SOURCES})
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 # set(CMAKE_CXX_FLAGS "-I ${PROJECT_SOURCE_DIR}/lib/boost/")
 
-
 find_package(Boost 1.56 REQUIRED COMPONENTS date_time filesystem iostreams)
 find_package(Threads REQUIRED)
 

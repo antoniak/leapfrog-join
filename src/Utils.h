@@ -17,8 +17,13 @@
 #include <thread>
 #include <tuple>
 
+
+namespace constants {
+    static const std::string TABLE_FILE_EXTENSION = ".tbl";
+}
+
 namespace types {
-    template<typename T> using Tuple = std::tuple<int, T, T>;
+    template<typename T> using Tuple = T*;
     template<typename T> using Table = std::vector<Tuple<T>>;
     template<typename T> using Database = std::vector<Table<T>>;    
 }
@@ -31,20 +36,23 @@ namespace utils {
     //     else return false;
     // }
 
-    // template <typename T>
-    // void ReadTable(const std::string &path, int attributes, Table<T> &table) {
-    //     std::ifstream input(path, std::ifstream::in);
-    //     table.clear();
-    //     Tuple<T> tuple(attributes);
-    //     T elem;
-    //     while (input >> elem){
-    //         input >> elem_1;
-    //         auto tuple = std::make_tuple(id, elem_0, elem_1);
-    //         table.push_back(tuple);
-    //         id++;
-    //     }
-    //     input.close();
-    // }
+    template <typename T>
+    void ReadTable(const std::string path, int attributes, types::Table<T> &table) {
+        table.clear();
+        std::ifstream input(path);
+        if (!input)
+            std::cerr <<  path + " does not exist." << std::endl;
+
+        T elem{};
+        while (input >> elem) {
+            auto tuple = new T[attributes];
+            tuple[0] = elem;
+            for (int i = 1; i < attributes; ++i) {
+                input >> tuple[i];
+            }
+            table.push_back(tuple);
+        }
+    }
 
     template<typename T>
     static std::vector<std::vector<T>> PartitionTable(const std::vector<T>& table, int n) {
@@ -65,6 +73,12 @@ namespace utils {
             begin = end;
         }
         return parts;
+    }
+
+    static int mod(const int a, const int b) {
+        int m = a % b;
+        if (m < 0) { m = (b < 0) ? m - b : m + b; }
+        return m;
     }
 }
 

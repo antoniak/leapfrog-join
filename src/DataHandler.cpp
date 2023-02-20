@@ -49,8 +49,9 @@ void DataHandler::parseSchema(std::string path) {
             exit(1);
         }
 
-    } catch(const property_tree::json_parser_error &e) {
-        std::cerr << "The input json file must be a valid json object." << std::endl;
+    } 
+    catch(const property_tree::json_parser_error &e) {
+        std::cerr << "The input json file must exist and be a valid json object." << std::endl;
         exit(1);
     }
 
@@ -66,24 +67,30 @@ void DataHandler::parseSchema(std::string path) {
         }
     }
 
-    for (auto v: variableOrder) {
-        if(find(variables.begin(), variables.end(), variables[v]) == variables.end()){
-            std::cerr << "The variables in the variable order do not match the variables in the schema." << std::endl;
-            exit(1);
+    if (variableOrder.size() != variables.size()) {
+        std::cerr << "The variable order must include the same number of variables with the variables in the schema.";
+        exit(1);
+    } else {
+        for (auto v: variableOrder) {
+            if(find(variables.begin(), variables.end(), variables[v]) == variables.end()){
+                std::cerr << "The variables in the variable order must match the variables in the schema." << std::endl;
+                exit(1);
+            }
         }
     }
 } 
 
 
-void DataHandler::readDatabase() {
-    for (auto relation: relations) {
-
+void DataHandler::readDatabase(std::string path) {
+    database.resize(relations.size());
+    for (int i = 0; i < relations.size(); i++) {
+        ReadTable(path + relations[i] + ".tbl", relationsToVariables[i].size(), database[i]);
     }
 }
 
 DataHandler::DataHandler(std::string path) {
     parseSchema(path);
-    readDatabase();
+    readDatabase(path);
 }
 
 DataHandler::~DataHandler() {

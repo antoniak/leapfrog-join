@@ -3,11 +3,11 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
-// #include <boost/foreach.hpp>
 
 #include "Utils.h"
 
 using namespace types;
+using namespace utils;
 using namespace boost;
 
 class DataHandler {
@@ -19,11 +19,11 @@ public:
     std::unordered_map<int, std::vector<int>> relationsToVariables;
     std::unordered_map<int, std::vector<int>> variablesToRelations;
     std::vector<int>  variableOrder;
-    Database<size_t> database;
+    Database<int> database;
 
     /* constructors */
     DataHandler(std::string path);
-    DataHandler(std::string schema, types::Database<size_t> db);
+    DataHandler(std::string schema, types::Database<int> db);
 
     /* destructor */
     ~DataHandler();
@@ -31,7 +31,7 @@ public:
 private:
 
     void parseSchema(std::string path);
-    void readDatabase();
+    void readDatabase(std::string path);
 
 };
 

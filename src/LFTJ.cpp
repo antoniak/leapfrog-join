@@ -46,9 +46,9 @@ LFTJ::LFTJ(DataHandler *dH, bool out): dH_(dH), out_(out) {
 }
 
 /* Count the tuples in the result. */
-Table<int>* LFTJ::Compute() {
+Table<int> LFTJ::Compute() {
     if (isEmpty_) {
-        return new Table<int>();
+        return resultTable_;
     }
     LFTJ::Open(); // initialize and search for the first match
     while(true) {
@@ -159,7 +159,7 @@ void LFTJ::UpdateResult(int value) {
     if(level_ == dH_->variables.size() - 1) {
         count_ += levels_[level_]->level_count;
         if(out_) {
-            resultTable_->push_back(tuple_);
+            resultTable_.push_back(tuple_);
         }
     }
 }

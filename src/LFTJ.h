@@ -27,7 +27,7 @@ class LFTJ {
 public:
 
     /**
-    * LFTJ contructor.
+    * LFTJ constructor.
     */
     explicit LFTJ(DataHandler *dH, bool out = false);
     
@@ -39,13 +39,13 @@ public:
     /**
     * Count the number of tuples in the result.
     */
-    Table<int>* Compute();
+    Table<int> Compute();
 
 private:
     DataHandler *dH_;
     bool out_;
     Tuple<int> tuple_;
-    Table<int> *resultTable_;
+    Table<int> resultTable_;
     std::unordered_map<int, TrieIterator*> trieIterators_;
     std::vector<Level*> levels_;
     bool isEmpty_ = false;

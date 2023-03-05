@@ -8,9 +8,12 @@ Level::Level(std::vector<TrieIterator*> iters){
     for (auto iter: iters) iters_.push_back(iter);
 }
 
-LFTJ::LFTJ(DataHandler *dH, bool count) : dH_(dH), countTuples_(count) {
-    attrOrder_ = dH_->variableOrder;
+LFTJ::LFTJ(DataHandler *dH): dH_(dH) {
+    
+    attrOrder_ = dH_->variableOrder; // initialize the variable order
+    // tuple_ =  new int(dH_->variableOrder.size()); 
 
+    // If at least one relation is empty then return. 
     for (int table = 0; table < dH_->relations.size(); ++table) {
         if(dH_->database[table].size() == 0) {
             isEmpty_ = true;
@@ -19,6 +22,7 @@ LFTJ::LFTJ(DataHandler *dH, bool count) : dH_(dH), countTuples_(count) {
     }
 
     for (int table = 0; table < dH_->relations.size(); ++table) {
+        // for each relation set the order of the variables in accordance with the variable order given by the user
         std::vector<int> order;
         order.reserve(dH_->relationsToVariables[table].size());
         for (auto attr: attrOrder_) {
@@ -28,38 +32,50 @@ LFTJ::LFTJ(DataHandler *dH, bool count) : dH_(dH), countTuples_(count) {
                 order.push_back(index);
             }
         }
+        // construct the trie iterators for that relation
         trieIterators_[table] = new TrieIterator(dH_->database[table], order);
     }
 
+    // construct a set of leapfrog joins; one for each variable in the query
     levels_.reserve(dH_->variables.size());
     for (auto attr: attrOrder_){
         std::vector<TrieIterator*> iters;
         iters.reserve(dH_->variablesToRelations[attr].size());
-        for(auto table: dH_->variablesToRelations[attr]) iters.push_back(trieIterators_[table]);
+        for(auto table: dH_->variablesToRelations[attr]) {
+            iters.push_back(trieIterators_[table]);
+        }
         levels_.push_back(new Level(iters));
     }
 }
 
+/* Count the tuples in the result. */
 long long LFTJ::Count() {
     if (isEmpty_) return count_;
-    LFTJ::Open();
+    LFTJ::Open(); // initialize and search for the first match
     while(true) {
-        if(levels_[level_]->atEnd) {
-            if (level_ == 0) break;
-            else {
-                LFTJ::Up();
-                LFTJ::Next();
+        if(levels_[level_]->atEnd) { // if the end of the level is reached
+            if (level_ == 0) {
+                // return 
+                break; 
+            } else {
+                // move one level up and search for the next match 
+                LFTJ::Up(); 
+                LFTJ::Next(); 
             }
-        } else {
-            if (level_ == dH_->variables.size() - 1) LFTJ::Next();
-            else LFTJ::Open();
+        } else { 
+            if (level_ == dH_->variables.size() - 1) { // if this is the last level
+                LFTJ::Next(); // find the next match
+            } else { 
+                LFTJ::Open(); // open the next level
+            }
         }
     }
     return count_;
 }
 
+/* Initialise the iterators and call search to find the first match. */
 void LFTJ::Init() {
-    if(AnyIterAtEnd()) {
+    if(AnyIterAtEnd()) { 
         levels_[level_]->atEnd = true;
     } else {
         levels_[level_]->atEnd = false;
@@ -67,29 +83,32 @@ void LFTJ::Init() {
             levels_[level_]->iters_.end(), [this](TrieIterator* it_a, TrieIterator* it_b) {
                 if (it_a->key() < it_b->key()) return true;
                 return false;
-        });
+        }); // sort by key 
         levels_[level_]->p = 0;
         LFTJ::Search();
     }
 }
 
+/* Place all iterators at the first key of the next level.*/
 void LFTJ::Open() {
     level_++;
     for(auto iter: levels_[level_]->iters_) iter->open();
-    LFTJ::Init();
+    LFTJ::Init(); 
 }
 
+/* Move the iterators one level up. */
 void LFTJ::Up() {
     for(auto iter: levels_[level_]->iters_) iter->up();
     level_--;
 }
 
+/* Search for the first match */
 void LFTJ::Search() {
     int k = levels_[level_]->iters_.size();
     int x_ = levels_[level_]->iters_[utils::mod(levels_[level_]->p-1, k)]->key();
     while(true) {
         int x = levels_[level_]->iters_[levels_[level_]->p]->key();
-        if (x == x_) {
+        if (x == x_) { // all iterators have the same key
             UpdateResult();
             return;
         } else {
@@ -105,6 +124,7 @@ void LFTJ::Search() {
     }
 }
 
+/* Find the next result. */
 void LFTJ::Next() {
     levels_[level_]->iters_[levels_[level_]->p]->next();
     if(levels_[level_]->iters_[levels_[level_]->p]->atEnd()) {
@@ -116,21 +136,25 @@ void LFTJ::Next() {
     }
 }
 
+/* Update the counts and the result table. */
 void LFTJ::UpdateResult() {
-    if(level_ == 0) levels_[level_]->count = 1;
-    if(level_ > 0) levels_[level_]->count = levels_[level_-1]->count;
+    if(level_ == 0) levels_[level_]->level_count = 1;
+    if(level_ > 0) levels_[level_]->level_count = levels_[level_-1]->level_count;
     for (auto iter: levels_[level_]->iters_) {
-        if(iter->isLeaf()) levels_[level_]->count *= iter->count();
+        if(iter->isLeaf()) levels_[level_]->level_count *= iter->count();
     }
     if(level_ == dH_->variables.size() - 1) {
-        count_ += levels_[level_]->count;
+        count_ += levels_[level_]->level_count;
         // resultTable_.push_back();
     }
 }
 
+/* Check if any of the iterators has reached its end. */
 bool LFTJ::AnyIterAtEnd() {
     for(auto iter: levels_[level_]->iters_) {
-        if (iter->atEnd()) return true;
+        if (iter->atEnd()) {
+            return true;
+        }
     }
     return false;
 }

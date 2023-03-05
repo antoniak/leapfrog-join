@@ -9,25 +9,40 @@ using namespace types;
 
 class Level {
 public:
-    bool atEnd;
+    bool atEnd; 
     int p;
     int key;
-    long long count;
-    std::vector<TrieIterator*> iters_;
+    long long level_count; 
+    std::vector<TrieIterator*> iters_; 
 
 public:
+    /**
+    * Level constructor.
+    */
     Level(std::vector<TrieIterator*> iters);
 };
 
 class LFTJ {
 public:
-    explicit LFTJ(DataHandler *dH, bool count = false);
+
+    /**
+    * LFTJ contructor.
+    */
+    explicit LFTJ(DataHandler *dH);
+    
+    /**
+    * LFTJ destructor.
+    */
     ~LFTJ() = default;
+
+    /**
+    * Count the number of tuples in the result.
+    */
     long long Count();
 
 private:
     DataHandler *dH_;
-    bool countTuples_;
+    // Tuple<int> tuple_;
     // Table<int> resultTable_;
     std::unordered_map<int, TrieIterator*> trieIterators_;
     std::vector<int> attrOrder_;

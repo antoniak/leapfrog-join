@@ -29,7 +29,8 @@ public:
     ~DataHandler();
 
 private:
-
+    /* helpe
+    r functions */
     void parseSchema(std::string path);
     void readDatabase(std::string path);
 

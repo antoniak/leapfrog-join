@@ -9,7 +9,9 @@ TrieNode::TrieNode (TrieNode* node, int value, bool isLeaf) {
 };
 
 TrieNode::~TrieNode() {
-    if (this->isRoot_) return;
+    if (this->isRoot_) {
+        return;
+    }
     std::map<int, TrieNode*>::iterator it = this->children.begin();
     while(it != this->children.end()) {
         it->second->~TrieNode();
@@ -26,12 +28,16 @@ TrieIterator::TrieIterator(Table<int> table, std::vector<int> attr_order) {
         TrieNode* prev = nullptr;
         for (int i = 0; i < attr_order.size(); i++){
             bool leaf_ = false;
-            if (i == (attr_order.size() - 1)) leaf_ = true; 
+            if (i == (attr_order.size() - 1)) {
+                leaf_ = true;
+            } 
             if (cur->children.find(tuple[attr_order[i]]) == cur->children.end()){
                 TrieNode* new_node = new TrieNode(cur, tuple[attr_order[i]], leaf_);
                 cur->children[tuple[attr_order[i]]] = new_node;
             } 
-            if (leaf_) cur->children[tuple[attr_order[i]]]->count++;
+            if (leaf_) {
+                cur->children[tuple[attr_order[i]]]->count++;
+            }
             prev = cur;
             cur = cur->children.find(tuple[attr_order[i]])->second;                
         }
@@ -39,7 +45,9 @@ TrieIterator::TrieIterator(Table<int> table, std::vector<int> attr_order) {
 }  
 
 TrieIterator::~TrieIterator() {
-    while (this->node->parent != nullptr) this->up();
+    while (this->node->parent != nullptr) {
+        this->up();
+    }
     this->node->~TrieNode(); 
 }  
 
@@ -55,10 +63,14 @@ void TrieIterator::up() {
         this->node = this->node->parent;
 }
 
-int TrieIterator::key() { return this->node->value_; }
+int TrieIterator::key() { 
+    return this->node->value_; 
+}
 
 bool TrieIterator::atEnd() {
-    if(this->node->atEnd_) return true;
+    if(this->node->atEnd_) {
+        return true;
+    }
     return false;
 }
 
@@ -88,6 +100,10 @@ void TrieIterator::seek(int key) {
     }
 }
 
- long long TrieIterator::count() { return this->node->count; }
+ long long TrieIterator::count() { 
+    return this->node->count; 
+}
 
- bool TrieIterator::isLeaf() { return this->node->isLeaf_; }
+ bool TrieIterator::isLeaf() { 
+    return this->node->isLeaf_; 
+}

@@ -35,17 +35,20 @@ int triangle_instance(int n) {
         file.close();
     }
 }
-
 int main (int argc, char** argv) {
-    for (int n = 10; n < 10000001; n = n*10) {
+    for (int n = 10; n < 1000001; n = n*10) {
+        
         triangle_instance(n);
         auto dh = new DataHandler("../data/triangle/");
+        
         LFTJ lftj(dh);
+        
         auto start = std::chrono::steady_clock::now();
-        std::cout << lftj.Count() << std::endl;
+        lftj.Compute();
+        
         auto end = std::chrono::steady_clock::now();
         std::chrono::duration<double> elapsed_seconds = end-start;
-    std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
+        std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
 
     } 
     

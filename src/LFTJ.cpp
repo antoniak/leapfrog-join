@@ -159,7 +159,9 @@ void LFTJ::UpdateResult(int value) {
     if(level_ == dH_->variables.size() - 1) {
         count_ += levels_[level_]->level_count;
         if(out_) {
-            resultTable_.push_back(tuple_);
+            for (int i = 0; i < levels_[level_]->level_count; i++) {
+                resultTable_.push_back(tuple_);
+            }
         }
     }
 }

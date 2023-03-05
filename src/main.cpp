@@ -41,7 +41,7 @@ int main (int argc, char** argv) {
         triangle_instance(n);
         auto dh = new DataHandler("../data/triangle/");
         
-        LFTJ lftj(dh, true);
+        LFTJ lftj(dh);
         
         auto start = std::chrono::steady_clock::now();
         lftj.Compute();
